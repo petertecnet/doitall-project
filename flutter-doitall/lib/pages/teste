@@ -1,0 +1,151 @@
+import 'dart:io';
+
+import 'package:flutter/material.dart';
+import '../../../Core/Animation/Fade_Animation.dart';
+import '../../../controller/product_controller.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
+
+class NewProductPage extends StatefulWidget {
+  final int companyid;
+  final int userid;
+  const NewProductPage(
+      {Key? key, required this.companyid, required this.userid})
+      : super(key: key);
+  @override
+  _NewProductPageState createState() =>
+      _NewProductPageState(companyid: companyid, userid: userid);
+}
+
+class _NewProductPageState extends State<NewProductPage> {
+  final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
+  final _priceController = TextEditingController();
+
+  final int companyid;
+  final int userid;
+
+  File? _image;
+  PickedFile? _pickedFile;
+  final _picker = ImagePicker();
+
+  Future<void> _pickImage() async {
+    _pickedFile = await _picker.getImage(source: ImageSource.gallery);
+    if (await Permission.photos.request().isGranted) {
+      final pickedFile =
+          await ImagePicker().getImage(source: ImageSource.gallery);
+      if (pickedFile != null) {
+        setState(() {
+          _image = File(pickedFile.path);
+        });
+      }
+    } else {
+      // Você não tem permissão para acessar a galeria de imagens
+      // Exiba uma mensagem ou solicite permissão novamente
+    }
+    if (_pickedFile != null) {
+      setState(() {
+        _image = File(_pickedFile!.path);
+      });
+    }
+  }
+
+  _NewProductPageState({required this.companyid, required this.userid});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Novo produto da empresa '),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              FadeAnimation(
+                duration: Duration(milliseconds: 500),
+                delay: 0.2,
+                child: _pickedFile != null
+                    ? CircleAvatar(
+                        radius: 150,
+                        backgroundImage: FileImage(File(_pickedFile!.path)),
+                      )
+                    : CircleAvatar(
+                        radius: 150,
+                        backgroundImage: NetworkImage(
+                            "https://doitall.com.br/img/avatar.png"),
+                      ),
+              ),
+              FadeAnimation(
+                delay: 1,
+                duration: Duration(milliseconds: 500),
+                child: Container(
+                  width: 300,
+                  height: 40,
+                  padding: const EdgeInsets.all(5.0),
+                  child: ElevatedButton(
+                    child: Text('Foto do produto'),
+                    onPressed: () => _pickImage(),
+                  ),
+                ),
+              ),
+              TextFormField(
+                controller: _nameController,
+                decoration: InputDecoration(
+                  labelText: 'Nome ',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor, insira o nome do produto';
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                controller: _priceController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: 'Preço ',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor, insira o preço do produto';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 16.0),
+              ElevatedButton(
+                onPressed: () {
+                  if (_image != null) {
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        backgroundColor: Color.fromARGB(255, 188, 28, 28),
+                        content:
+                            Text('Por favor envie um foto do produto/serviço'),
+                        duration: Duration(seconds: 5),
+                        behavior: SnackBarBehavior.floating,
+                      ),
+                    );
+                  }
+
+                  if (_formKey.currentState!.validate()) {
+                    final ProductController productController =
+                        ProductController();
+                    productController.store(context, _nameController.text,
+                        companyid, userid, _image);
+                  }
+                },
+                child: Text('Salvar'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
