@@ -5,10 +5,12 @@ import 'package:doitall/pages/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../Core/Animation/Fade_Animation.dart';
 import '../pages/auth/email_verification_page.dart';
 import 'package:doitall/pages/auth/reset_password_page.dart';
+import 'api_config.dart';
+
+final String endpoint = APIConfig.baseURL + '/auth';
 
 class AuthController {
   Future<void> login(
@@ -61,7 +63,7 @@ class AuthController {
       );
       return;
     }
-    final url = Uri.parse('https://doitall.com.br/api/auth/login');
+    final url = Uri.parse('${endpoint}/login');
     final response = await http.post(
       url,
       body: {
@@ -113,7 +115,7 @@ class AuthController {
     String phone,
     String password,
   ) async {
-    final url = Uri.parse('https://doitall.com.br/api/auth/register');
+    final url = Uri.parse('${endpoint}/register');
 
     final response = await http.post(
       url,
@@ -146,7 +148,7 @@ class AuthController {
     UserModel user,
     String code,
   ) async {
-    final url = Uri.parse('https://doitall.com.br/api/auth/codevalidation');
+    final url = Uri.parse('${endpoint}/codevalidation');
 
     final response = await http.post(
       url,
@@ -187,7 +189,7 @@ class AuthController {
     BuildContext context,
     UserModel user,
   ) async {
-    final url = Uri.parse('https://doitall.com.br/api/auth/sendemailcode');
+    final url = Uri.parse('${endpoint}/sendemailcode');
 
     final response = await http.post(
       url,
@@ -211,8 +213,7 @@ class AuthController {
     BuildContext context,
     String email,
   ) async {
-    final url =
-        Uri.parse('https://doitall.com.br/api/auth/sendCodeForgotPassword');
+    final url = Uri.parse('${endpoint}/sendCodeForgotPassword');
 
     final response = await http.post(
       url,
@@ -247,8 +248,7 @@ class AuthController {
     String code,
     String password,
   ) async {
-    final url =
-        Uri.parse('https://doitall.com.br/api/auth/codevalidationPassword');
+    final url = Uri.parse('${endpoint}/codevalidationPassword');
 
     final response = await http.post(
       url,

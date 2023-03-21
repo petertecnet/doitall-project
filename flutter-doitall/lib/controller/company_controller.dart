@@ -2,11 +2,12 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:doitall/models/company_model.dart';
 import 'package:doitall/models/user_model.dart';
-import 'package:doitall/pages/company/new_company_page.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-
 import '../pages/company/company_edit_page.dart';
+import 'api_config.dart';
+
+final String endpoint = APIConfig.baseURL + '/company';
 
 class CompanyController {
   Future<void> updateImage(
@@ -23,7 +24,7 @@ class CompanyController {
       return;
     }
 
-    final url = Uri.parse('https://doitall.com.br/api/company/updateImage');
+    final url = Uri.parse('${endpoint}/updateImage');
     var request = http.MultipartRequest('POST', url);
     request.fields['userid'] = user.id.toString();
     request.files.add(await http.MultipartFile.fromPath('logo', _image.path));
@@ -63,7 +64,7 @@ class CompanyController {
   }
 
   Future<void> index(BuildContext context, int userid) async {
-    final url = Uri.parse('https://doitall.com.br/api/company/show');
+    final url = Uri.parse('${endpoint}/show');
     final body = {
       'user_id': userid.toString(),
     };
@@ -101,7 +102,7 @@ class CompanyController {
     UserModel user,
     String cnpj,
   ) async {
-    final url = Uri.parse('https://doitall.com.br/api/company/store');
+    final url = Uri.parse('${endpoint}/store');
 
     final response = await http.post(
       url,

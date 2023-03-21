@@ -4,15 +4,16 @@ import 'package:doitall/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../Core/Animation/Fade_Animation.dart';
 import '../pages/auth/email_verification_page.dart';
+import 'api_config.dart';
+
+final String endpoint = APIConfig.baseURL + '/auth';
 
 class EmailVerificationController {
   Future<void> emailverification(
       BuildContext context, dynamic id, emailverifiedat) async {
     if (emailverifiedat != null) {
-      final url = Uri.parse('https://doitall.com.br/api/auth/showuser');
+      final url = Uri.parse('${endpoint}/showuser');
       final response = await http.post(
         url,
         body: {
@@ -29,8 +30,7 @@ class EmailVerificationController {
         ),
       );
     }
-    final url =
-        Uri.parse('https://doitall.com.br/api/auth/resendEmailVerification');
+    final url = Uri.parse('${endpoint}/resendEmailVerification');
     final response = await http.post(
       url,
       body: {

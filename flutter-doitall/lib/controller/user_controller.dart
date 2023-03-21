@@ -1,17 +1,17 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user_model.dart';
-import '../pages/auth/email_verification_page.dart';
 import 'dart:io';
-
 import '../pages/user/user_edit_page.dart';
+import 'api_config.dart';
+
+final String endpoint = APIConfig.baseURL + '/user';
 
 class UserController {
   Future<void> index(BuildContext context, UserModel user, String name,
       String email, String phone, String cpf) async {
-    final url = Uri.parse('https://doitall.com.br/api/user/show');
+    final url = Uri.parse('${endpoint}/show');
     final body = {
       'id': user.id.toString(),
     };
@@ -42,8 +42,7 @@ class UserController {
       );
       return;
     }
-
-    final url = Uri.parse('https://doitall.com.br/api/user/updateImage');
+    final url = Uri.parse('${endpoint}/updateImage');
     var request = http.MultipartRequest('POST', url);
     request.fields['id'] = user.id.toString();
     request.files.add(await http.MultipartFile.fromPath('avatar', _image.path));
@@ -84,7 +83,7 @@ class UserController {
     if (phone.isEmpty) phone = user.phone!;
     if (email.isEmpty) email = user.email!;
     if (cpf.isEmpty) cpf = user.cpf!;
-    final url = Uri.parse('https://doitall.com.br/api/user/userupdate');
+    final url = Uri.parse('${endpoint}/userUpdate');
     final body = {
       'id': user.id.toString(),
       'name': name,
@@ -128,7 +127,7 @@ class UserController {
       String complement, String cep) async {
     if (complement.isEmpty) complement = user.complement!;
     if (cep.isEmpty) cep = user.cep!;
-    final url = Uri.parse('https://doitall.com.br/api/user/updateAddress');
+    final url = Uri.parse('${endpoint}/updateAddress');
     final body = {
       'id': user.id.toString(),
       'complement': complement,
@@ -173,7 +172,7 @@ class UserController {
     final phone = user.phone!;
     final email = user.email!;
     final cpf = user.cpf!;
-    final url = Uri.parse('https://doitall.com.br/api/user/userupdate');
+    final url = Uri.parse('${endpoint}/userUpdate');
     final body = {
       'id': user.id.toString(),
       'currentlyPassword': currentlyPassword,
@@ -217,9 +216,7 @@ class UserController {
 
   Future<void> changeemailcodevalidation(
       BuildContext context, UserModel user, String code) async {
-    final url =
-        Uri.parse('https://doitall.com.br/api/user/changeemailcodevalidation');
-
+    final url = Uri.parse('${endpoint}/changeemailcodevalidation');
     final body = {'id': user.id.toString(), 'verification_code': code};
     final response = await http.post(url, body: body);
     final json = jsonDecode(response.body);

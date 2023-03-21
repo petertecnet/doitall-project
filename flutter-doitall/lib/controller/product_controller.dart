@@ -1,18 +1,20 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:doitall/pages/company/products/new_prdocut_page.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../models/product_model.dart';
 import '../models/user_model.dart';
 import '../pages/company/products/product_page.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
+import 'api_config.dart';
+
+final String endpoint = APIConfig.baseURL + '/product';
 
 class ProductController {
   Future<void> create(BuildContext context, int companyid, int userid) async {
     try {
-      final url = Uri.parse('https://doitall.com.br/api/user/show');
+      final url = Uri.parse('${APIConfig.baseURL}/user/show');
       final body = {
         'user_id': userid.toString(),
       };
@@ -44,7 +46,7 @@ class ProductController {
       int companyid,
       int userid,
       File? _image) async {
-    final url = Uri.parse('https://doitall.com.br/api/product/store');
+      final url = Uri.parse('${endpoint}/store');
     var request = http.MultipartRequest('POST', url);
     request.fields['user_id'] = userid.toString();
     request.fields['company_id'] = companyid.toString();
@@ -93,7 +95,7 @@ class ProductController {
 
   Future<void> getProductsByCompanyId(
       BuildContext context, int companyid, int userid) async {
-    final url = Uri.parse('https://doitall.com.br/api/product/index');
+      final url = Uri.parse('${endpoint}/index');
     final body = {
       'company_id': companyid.toString(),
       'user_id': userid.toString(),
