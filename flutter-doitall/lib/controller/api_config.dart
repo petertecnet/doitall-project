@@ -1,3 +1,3 @@
 class APIConfig {
-  static const String baseURL = 'https://doitall.com.br/api';
+  static const String baseURL = 'http://127.0.0.1:8000/api';
 }
